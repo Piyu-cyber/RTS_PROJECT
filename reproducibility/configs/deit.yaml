@@ -1,0 +1,21 @@
+model_id: "deit_small_baseline"
+architecture: "deit_small_patch16_224"
+embed_dim: 384
+depth: 12
+num_heads: 6
+mlp_ratio: 4.0
+patch_size: 16
+img_size: 224
+num_classes: 6
+keep_rate: 1.0
+fuse_token: false
+drop_loc: []
+original_visual_tokens: 196
+cls_token: 1
+final_sequence_length: 197
+gmacs: 4.60
+params_m: 21.67
+pretrained_weights: "../reference/evit_weights/deit_small_patch16_224.pth"
+published_top1_in1k: 79.8
+published_top5_in1k: 95.0
+description: "Standard pretrained DeiT-Small backbone without token pruning"

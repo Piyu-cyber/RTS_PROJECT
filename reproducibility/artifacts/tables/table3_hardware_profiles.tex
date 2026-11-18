@@ -1,0 +1,16 @@
+\begin{table}[t]
+\centering
+\caption{Latency and Throughput Benchmarks on NVIDIA RTX 4060 Laptop GPU}
+\label{tab:hardware_profiles}
+\small
+\begin{tabular}{lcccccc}
+\hline
+\textbf{Model} & \textbf{Tokens} & \textbf{Eager Mean} & \textbf{Eager p95} & \textbf{Graph Mean} & \textbf{Graph p95} & \textbf{FPS} \\
+\hline
+deit_small_baseline & 197 & 13.11 & 0.00 & 3.25 & 3.68 & 417.1 \\
+evit_small_k09_fuse & 197 & 18.67 & 0.00 & 3.04 & 3.54 & 469.0 \\
+evit_small_k07_fuse & 197 & 25.27 & 0.00 & 2.90 & 3.49 & 557.3 \\
+evit_small_k05_fuse & 197 & 25.12 & 0.00 & 2.31 & 2.81 & 610.4 \\
+\hline
+\end{tabular}
+\end{table}

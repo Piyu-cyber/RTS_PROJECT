@@ -1,0 +1,71 @@
+# Canonical Real-Time Workload Profiles
+workloads:
+  - name: "periodic_low_loose"
+    arrival_pattern: "periodic"
+    intensity: 0.50
+    deadline_type: "loose"
+    relative_deadline_range_ms: [25.0, 40.0]
+    description: "Light periodic traffic with generous deadlines (undersaturated)."
+
+  - name: "periodic_mod_mod"
+    arrival_pattern: "periodic"
+    intensity: 0.85
+    deadline_type: "moderate"
+    relative_deadline_range_ms: [12.0, 20.0]
+    description: "Moderate periodic traffic operating near GPU capacity."
+
+  - name: "periodic_high_tight"
+    arrival_pattern: "periodic"
+    intensity: 1.15
+    deadline_type: "tight"
+    relative_deadline_range_ms: [5.0, 10.0]
+    description: "Heavy periodic traffic causing GPU saturation with tight deadlines."
+
+  - name: "periodic_low_tight"
+    arrival_pattern: "periodic"
+    intensity: 0.50
+    deadline_type: "tight"
+    relative_deadline_range_ms: [5.0, 10.0]
+    description: "Light load with tight deadlines testing dispatch latency responsiveness."
+
+  - name: "jittered_mod_mod"
+    arrival_pattern: "jittered"
+    intensity: 0.85
+    deadline_type: "moderate"
+    relative_deadline_range_ms: [12.0, 20.0]
+    description: "Periodic base with Gaussian inter-arrival timing jitter."
+
+  - name: "jittered_high_tight"
+    arrival_pattern: "jittered"
+    intensity: 1.15
+    deadline_type: "tight"
+    relative_deadline_range_ms: [5.0, 10.0]
+    description: "High-intensity traffic with jitter and tight deadlines."
+
+  - name: "bursty_mod_mod"
+    arrival_pattern: "bursty"
+    intensity: 0.85
+    deadline_type: "moderate"
+    relative_deadline_range_ms: [12.0, 20.0]
+    description: "Bimodal batch arrivals testing queue absorption."
+
+  - name: "bursty_high_tight"
+    arrival_pattern: "bursty"
+    intensity: 1.15
+    deadline_type: "tight"
+    relative_deadline_range_ms: [5.0, 10.0]
+    description: "Heavy bursts with tight deadlines stressing admission control and pruning."
+
+  - name: "overload_mod_deadline"
+    arrival_pattern: "overload"
+    intensity: 1.50
+    deadline_type: "moderate"
+    relative_deadline_range_ms: [12.0, 20.0]
+    description: "150% overload testing graceful degradation and load shedding."
+
+  - name: "overload_tight_deadline"
+    arrival_pattern: "overload"
+    intensity: 1.50
+    deadline_type: "tight"
+    relative_deadline_range_ms: [5.0, 10.0]
+    description: "Severe overload under tight deadlines (worst-case stress test)."

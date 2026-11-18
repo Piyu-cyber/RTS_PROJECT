@@ -1,0 +1,61 @@
+# Vision Transformer Model Configurations
+models:
+  deit_small_baseline:
+    display_name: "DeiT-Small Baseline (Full Sequence)"
+    architecture: "deit_small_patch16_224"
+    parameters_m: 21.67
+    macs_g: 4.60
+    keep_rate: 1.0
+    fuse_token: false
+    token_sequence: [196, 196, 196, 196, 196, 196, 196, 196, 196, 196, 196, 196]
+    bdd100k_val_top1: 78.42
+    bdd100k_test_top1: 77.64
+    bdd100k_test_macro_f1: 54.27
+    cuda_graph_p95_ms: 3.683
+    eager_p95_ms: 14.210
+    throughput_fps: 417.1
+
+  evit_small_k09_fuse:
+    display_name: "EViT-Small (Keep Rate 0.9 + Fusion)"
+    architecture: "evit_small_patch16_224"
+    parameters_m: 21.67
+    macs_g: 4.03
+    keep_rate: 0.9
+    fuse_token: true
+    token_sequence: [196, 196, 196, 178, 178, 178, 162, 162, 162, 147, 147, 147]
+    bdd100k_val_top1: 78.11
+    bdd100k_test_top1: 77.40
+    bdd100k_test_macro_f1: 51.28
+    cuda_graph_p95_ms: 3.238
+    eager_p95_ms: 12.890
+    throughput_fps: 469.0
+
+  evit_small_k07_fuse:
+    display_name: "EViT-Small (Keep Rate 0.7 + Fusion)"
+    architecture: "evit_small_patch16_224"
+    parameters_m: 21.67
+    macs_g: 3.03
+    keep_rate: 0.7
+    fuse_token: true
+    token_sequence: [196, 196, 196, 140, 140, 140, 100, 100, 100, 72, 72, 72]
+    bdd100k_val_top1: 77.53
+    bdd100k_test_top1: 76.97
+    bdd100k_test_macro_f1: 50.13
+    cuda_graph_p95_ms: 2.766
+    eager_p95_ms: 10.450
+    throughput_fps: 557.3
+
+  evit_small_k05_fuse:
+    display_name: "EViT-Small (Keep Rate 0.5 + Fusion)"
+    architecture: "evit_small_patch16_224"
+    parameters_m: 21.67
+    macs_g: 2.31
+    keep_rate: 0.5
+    fuse_token: true
+    token_sequence: [196, 196, 196, 101, 101, 101, 53, 53, 53, 29, 29, 29]
+    bdd100k_val_top1: 77.29
+    bdd100k_test_top1: 76.84
+    bdd100k_test_macro_f1: 49.74
+    cuda_graph_p95_ms: 2.385
+    eager_p95_ms: 8.920
+    throughput_fps: 610.4

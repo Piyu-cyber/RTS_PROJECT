@@ -1,0 +1,139 @@
+{
+  "metadata": {
+    "source_phase": "Phase 23B-1",
+    "hardware_environment": "NVIDIA GeForce RTX 4060 Laptop GPU (8,188 MiB VRAM), Driver 591.66",
+    "software_environment": "Windows 11 Home (Build 26100), PyTorch 2.5.1+cu121, CUDA 12.1, Python 3.11.9 (.venv_evit)",
+    "timing_methodology": "CUDA events with torch.cuda.synchronize(), 50 warmup iterations, 100 timed iterations per run across 3 independent runs",
+    "formal_bound_disclaimer": "Measured latency distributions (mean, median, p95, p99) reflect empirical hardware profiles. They do NOT constitute formal Worst-Case Execution Time (WCET) guarantees."
+  },
+  "profiles": {
+    "deit_small_baseline": {
+      "config_id": "deit_small_baseline",
+      "display_name": "DeiT-Small Baseline (Full Sequence)",
+      "keep_rate": 1.0,
+      "fuse_token": false,
+      "parameters_m": 22.05,
+      "macs_g": 4.60,
+      "token_sequence": [196, 196, 196, 196, 196, 196, 196, 196, 196, 196, 196, 196],
+      "val_top1_accuracy": 93.89,
+      "test_top1_accuracy": 92.67,
+      "test_macro_f1": 92.56,
+      "cuda_graph_latency_ms": {
+        "mean": 3.278,
+        "median": 3.148,
+        "p95": 3.779,
+        "p99": 3.965,
+        "min": 3.010,
+        "max": 4.679,
+        "std": 0.280,
+        "sample_count": 300
+      },
+      "eager_latency_ms": {
+        "mean": 13.377,
+        "median": 13.113,
+        "p95": 17.659,
+        "p99": 21.391,
+        "sample_count": 300
+      },
+      "throughput_fps": 432.6,
+      "checkpoint_path": "outputs/phase23b/checkpoints/deit_small_baseline_pet37_best.pth",
+      "official_checkpoint": "reference/evit_weights/deit_small_patch16_224.pth"
+    },
+    "evit_small_k09_fuse": {
+      "config_id": "evit_small_k09_fuse",
+      "display_name": "EViT-Small (Keep Rate 0.9 + Token Fusion)",
+      "keep_rate": 0.9,
+      "fuse_token": true,
+      "parameters_m": 22.05,
+      "macs_g": 4.03,
+      "token_sequence": [196, 196, 196, 178, 178, 178, 162, 162, 162, 147, 147, 147],
+      "val_top1_accuracy": 93.61,
+      "test_top1_accuracy": 92.75,
+      "test_macro_f1": 92.66,
+      "cuda_graph_latency_ms": {
+        "mean": 3.135,
+        "median": 2.920,
+        "p95": 3.512,
+        "p99": 3.821,
+        "min": 2.850,
+        "max": 4.210,
+        "std": 0.240,
+        "sample_count": 300
+      },
+      "eager_latency_ms": {
+        "mean": 15.552,
+        "median": 15.299,
+        "p95": 19.954,
+        "p99": 24.310,
+        "sample_count": 300
+      },
+      "throughput_fps": 469.5,
+      "checkpoint_path": "outputs/phase23b/checkpoints/evit_small_k09_fuse_pet37_best.pth",
+      "official_checkpoint": "reference/evit_weights/evit_small_patch16_0.9_fuse.pth"
+    },
+    "evit_small_k07_fuse": {
+      "config_id": "evit_small_k07_fuse",
+      "display_name": "EViT-Small (Keep Rate 0.7 + Token Fusion)",
+      "keep_rate": 0.7,
+      "fuse_token": true,
+      "parameters_m": 22.05,
+      "macs_g": 3.03,
+      "token_sequence": [196, 196, 196, 139, 139, 139, 99, 99, 99, 71, 71, 71],
+      "val_top1_accuracy": 93.48,
+      "test_top1_accuracy": 93.19,
+      "test_macro_f1": 93.09,
+      "cuda_graph_latency_ms": {
+        "mean": 2.789,
+        "median": 2.499,
+        "p95": 3.250,
+        "p99": 3.580,
+        "min": 2.390,
+        "max": 3.910,
+        "std": 0.210,
+        "sample_count": 300
+      },
+      "eager_latency_ms": {
+        "mean": 15.527,
+        "median": 15.029,
+        "p95": 20.674,
+        "p99": 25.023,
+        "sample_count": 300
+      },
+      "throughput_fps": 622.2,
+      "checkpoint_path": "outputs/phase23b/checkpoints/evit_small_k07_fuse_pet37_best.pth",
+      "official_checkpoint": "reference/evit_weights/evit_small_patch16_0.7_fuse.pth"
+    },
+    "evit_small_k05_fuse": {
+      "config_id": "evit_small_k05_fuse",
+      "display_name": "EViT-Small (Keep Rate 0.5 + Token Fusion)",
+      "keep_rate": 0.5,
+      "fuse_token": true,
+      "parameters_m": 22.05,
+      "macs_g": 2.31,
+      "token_sequence": [196, 196, 196, 99, 99, 99, 51, 51, 51, 27, 27, 27],
+      "val_top1_accuracy": 92.53,
+      "test_top1_accuracy": 91.44,
+      "test_macro_f1": 91.34,
+      "cuda_graph_latency_ms": {
+        "mean": 2.355,
+        "median": 2.384,
+        "p95": 2.710,
+        "p99": 2.940,
+        "min": 2.150,
+        "max": 3.120,
+        "std": 0.180,
+        "sample_count": 300
+      },
+      "eager_latency_ms": {
+        "mean": 15.673,
+        "median": 15.588,
+        "p95": 19.796,
+        "p99": 22.849,
+        "sample_count": 300
+      },
+      "throughput_fps": 788.8,
+      "checkpoint_path": "outputs/phase23b/checkpoints/evit_small_k05_fuse_pet37_best.pth",
+      "official_checkpoint": "reference/evit_weights/evit_small_patch16_0.5_fuse.pth"
+    }
+  }
+}

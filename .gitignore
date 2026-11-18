@@ -1,0 +1,66 @@
+# Virtual environments
+.venv/
+.venv_evit/
+venv/
+env/
+ENV/
+
+# Python caches and bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# Datasets and raw media
+data/
+datasets/
+downloads/
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+
+# Model weights and checkpoints
+*.pth
+*.pt
+*.ckpt
+*.bin
+*.onnx
+weights/
+finetuning/
+baseline/checkpoints/
+
+# External reference clones and submodules
+reference/
+
+# Temporary and scratch files
+scratch/
+*.tmp
+*.log
+
+# LaTeX auxiliary files in root
+*.aux
+*.bbl
+*.blg
+*.out
+*.synctex.gz
+
+# Outputs: Ignore large experiment output directories, preserve lightweight documented research artifacts
+outputs/*
+!outputs/phase24b/
+!outputs/bdd100k_migration/
+outputs/bdd100k_migration/*
+!outputs/bdd100k_migration/model_profiles.json
+!outputs/bdd100k_migration/full_dataset_model_profiles.json
+!outputs/phase24/
+outputs/phase24/*
+!outputs/phase24/model_profiles.json
+
+# OS and IDE files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

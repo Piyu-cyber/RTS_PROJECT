@@ -1,0 +1,20 @@
+Copyright 2026 Piyush Prashant, Priyanshu Mittal, Thejas Gowda U M, Shriyansh S Sahoo.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+--------------------------------------------------------------------------------
+Third-Party Attributions:
+- EViT (Expeditious Vision Transformers): Apache License 2.0 (Liang et al., ICLR 2022).
+- DeiT (Data-efficient Image Transformers): Apache License 2.0 (Touvron et al., ICML 2021).
+- PyTorch and Torchvision: BSD-style License (Meta Platforms, Inc.).
+- PyTorch Image Models (timm): Apache License 2.0 (Ross Wightman).

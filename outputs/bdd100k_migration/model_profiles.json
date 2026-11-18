@@ -1,0 +1,206 @@
+{
+  "metadata": {
+    "dataset": "BDD100K",
+    "task": "driving_scene_classification",
+    "num_classes": 6,
+    "classes": [
+      "city street",
+      "highway",
+      "residential",
+      "parking lot",
+      "gas stations",
+      "tunnel"
+    ],
+    "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "measurement_iterations": 200,
+    "warmup_iterations": 50,
+    "precision": "FP32",
+    "batch_size": 1
+  },
+  "profiles": {
+    "deit_small_baseline": {
+      "config_id": "deit_small_baseline",
+      "display_name": "DeiT-Small Baseline",
+      "keep_rate": 1.0,
+      "fuse_token": false,
+      "parameters_m": 21.67,
+      "macs_g": 4.6,
+      "token_sequence": [
+        196,
+        196,
+        196,
+        196,
+        196,
+        196,
+        196,
+        196,
+        196,
+        196,
+        196,
+        196
+      ],
+      "val_top1_accuracy": 68.0,
+      "test_top1_accuracy": 71.11,
+      "test_macro_f1": 53.78,
+      "cuda_graph_latency_ms": {
+        "mean": 3.12,
+        "median": 3.068,
+        "p95": 3.343,
+        "p99": 3.762,
+        "min": 2.89,
+        "max": 4.887,
+        "std": 0.204
+      },
+      "eager_latency_ms": {
+        "mean": 20.145,
+        "median": 19.858,
+        "p95": 25.267,
+        "p99": 26.811,
+        "min": 13.791,
+        "max": 57.583,
+        "std": 4.523
+      },
+      "throughput_fps": 445.7,
+      "checkpoint_path": "outputs/bdd100k_migration/checkpoints/deit_small_baseline_bdd_best.pth",
+      "official_checkpoint": "deit_small_patch16_224.pth"
+    },
+    "evit_small_k09_fuse": {
+      "config_id": "evit_small_k09_fuse",
+      "display_name": "EViT-Small 0.9",
+      "keep_rate": 0.9,
+      "fuse_token": true,
+      "parameters_m": 21.67,
+      "macs_g": 4.03,
+      "token_sequence": [
+        196,
+        196,
+        196,
+        178,
+        178,
+        178,
+        162,
+        162,
+        162,
+        147,
+        147,
+        147
+      ],
+      "val_top1_accuracy": 69.78,
+      "test_top1_accuracy": 68.89,
+      "test_macro_f1": 48.67,
+      "cuda_graph_latency_ms": {
+        "mean": 2.863,
+        "median": 2.807,
+        "p95": 3.152,
+        "p99": 3.308,
+        "min": 2.647,
+        "max": 3.576,
+        "std": 0.159
+      },
+      "eager_latency_ms": {
+        "mean": 25.063,
+        "median": 24.973,
+        "p95": 30.022,
+        "p99": 31.617,
+        "min": 17.866,
+        "max": 32.289,
+        "std": 3.078
+      },
+      "throughput_fps": 496.1,
+      "checkpoint_path": "outputs/bdd100k_migration/checkpoints/evit_small_k09_fuse_bdd_best.pth",
+      "official_checkpoint": "evit_small_patch16_0.9_fuse.pth"
+    },
+    "evit_small_k07_fuse": {
+      "config_id": "evit_small_k07_fuse",
+      "display_name": "EViT-Small 0.7",
+      "keep_rate": 0.7,
+      "fuse_token": true,
+      "parameters_m": 21.67,
+      "macs_g": 3.03,
+      "token_sequence": [
+        196,
+        196,
+        196,
+        139,
+        139,
+        139,
+        99,
+        99,
+        99,
+        71,
+        71,
+        71
+      ],
+      "val_top1_accuracy": 70.67,
+      "test_top1_accuracy": 70.67,
+      "test_macro_f1": 50.4,
+      "cuda_graph_latency_ms": {
+        "mean": 2.508,
+        "median": 2.424,
+        "p95": 2.946,
+        "p99": 3.088,
+        "min": 2.275,
+        "max": 3.165,
+        "std": 0.209
+      },
+      "eager_latency_ms": {
+        "mean": 23.527,
+        "median": 23.318,
+        "p95": 30.201,
+        "p99": 36.366,
+        "min": 14.896,
+        "max": 43.463,
+        "std": 4.287
+      },
+      "throughput_fps": 636.4,
+      "checkpoint_path": "outputs/bdd100k_migration/checkpoints/evit_small_k07_fuse_bdd_best.pth",
+      "official_checkpoint": "evit_small_patch16_0.7_fuse.pth"
+    },
+    "evit_small_k05_fuse": {
+      "config_id": "evit_small_k05_fuse",
+      "display_name": "EViT-Small 0.5",
+      "keep_rate": 0.5,
+      "fuse_token": true,
+      "parameters_m": 21.67,
+      "macs_g": 2.31,
+      "token_sequence": [
+        196,
+        196,
+        196,
+        99,
+        99,
+        99,
+        51,
+        51,
+        51,
+        27,
+        27,
+        27
+      ],
+      "val_top1_accuracy": 65.33,
+      "test_top1_accuracy": 65.33,
+      "test_macro_f1": 42.7,
+      "cuda_graph_latency_ms": {
+        "mean": 2.119,
+        "median": 2.016,
+        "p95": 2.484,
+        "p99": 2.675,
+        "min": 1.869,
+        "max": 2.713,
+        "std": 0.217
+      },
+      "eager_latency_ms": {
+        "mean": 24.364,
+        "median": 24.404,
+        "p95": 29.365,
+        "p99": 30.871,
+        "min": 17.345,
+        "max": 31.239,
+        "std": 3.143
+      },
+      "throughput_fps": 603.9,
+      "checkpoint_path": "outputs/bdd100k_migration/checkpoints/evit_small_k05_fuse_bdd_best.pth",
+      "official_checkpoint": "evit_small_patch16_0.5_fuse.pth"
+    }
+  }
+}

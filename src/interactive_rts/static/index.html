@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Real-Time Vision Inference System | Research Implementation Walkthrough</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- =====================================================================
+       TOP APP HEADER & NAVIGATION
+       ===================================================================== -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="header-branding">
+        <div class="academic-badge">IEEE RTS Presentation</div>
+        <h1 class="header-title">Deadline-Aware Adaptive Inference for Real-Time Vision Systems</h1>
+        <p class="header-subtitle">A step-by-step technical explanation of the architecture, request lifecycle, scheduling decisions, and deadline-aware inference.</p>
+      </div>
+      <nav class="header-nav">
+        <a href="#overview" class="nav-link active">Overview</a>
+        <a href="#walkthrough" class="nav-link">Implementation Walkthrough</a>
+        <a href="#results-limitations" class="nav-link">Results &amp; Limitations</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- =====================================================================
+       MAIN PRESENTATION CONTAINER
+       ===================================================================== -->
+  <main class="page-container">
+
+    <!-- ===================================================================
+         SECTION 1: OVERVIEW & SYSTEM PROBLEM
+         =================================================================== -->
+    <section id="overview" class="section-card">
+      <div class="section-header">
+        <span class="section-eyebrow">System Motivation</span>
+        <h2 class="section-heading">The Real-Time Vision Problem</h2>
+      </div>
+
+      <div class="overview-grid">
+        <div class="overview-text">
+          <p class="lead-text">
+            Standard Vision Transformers (ViTs) are optimized for average classification accuracy on static image sets. However, when deployed in <strong>real-time cyber-physical systems</strong> (such as autonomous robotics, drone navigation, or industrial inspection), images arrive as continuous requests with strict deadlines.
+          </p>
+          <div class="problem-statement-box">
+            <div class="ps-header">The Fundamental Bottleneck:</div>
+            <p>
+              When image arrival rate exceeds the GPU’s batch-1 inference throughput, request queues explode. Under standard First-In First-Out (FIFO) processing with fixed-capacity models, <strong>earlier requests monopolize the GPU</strong>, causing cascading delays that make subsequent requests miss their deadlines—even if the predictions are 100% correct.
+            </p>
+          </div>
+        </div>
+
+        <div class="overview-triad">
+          <div class="triad-card tc-blue">
+            <div class="triad-icon">📥</div>
+            <div class="triad-title">1. Dynamic Influx</div>
+            <div class="triad-desc">Images arrive at unpredictable intervals ($r_i$) with application-specific relative deadlines ($D_i$).</div>
+          </div>
+          <div class="triad-card tc-purple">
+            <div class="triad-icon">⚙️</div>
+            <div class="triad-title">2. Finite GPU Compute</div>
+            <div class="triad-desc">Single-lane GPU execution requires non-preemptive inference intervals ($C_k \approx 2.7\text{–}3.8\text{ ms}$).</div>
+          </div>
+          <div class="triad-card tc-teal">
+            <div class="triad-icon">⚡</div>
+            <div class="triad-title">3. Adaptive Pruning</div>
+            <div class="triad-desc">EViT dynamically trims inattentive patch tokens (196 &rarr; 49 tokens) to save up to 1.07 ms of slack per frame.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Core Formula Banner -->
+      <div class="core-formula-banner">
+        <div class="cf-item">
+          <span class="cf-label">Absolute Deadline</span>
+          <span class="cf-math">$$d_i = r_i + D_i$$</span>
+        </div>
+        <div class="cf-divider">&bull;</div>
+        <div class="cf-item">
+          <span class="cf-label">Queue Waiting Time</span>
+          <span class="cf-math">$$W_i = t_{\text{dispatch}} - r_i$$</span>
+        </div>
+        <div class="cf-divider">&bull;</div>
+        <div class="cf-item">
+          <span class="cf-label">Dispatch Slack</span>
+          <span class="cf-math">$$s_i(M) = d_i - (t_{\text{dispatch}} + C_M)$$</span>
+        </div>
+        <div class="cf-divider">&bull;</div>
+        <div class="cf-item">
+          <span class="cf-label">Timing Success Criterion</span>
+          <span class="cf-math">$$C_i \le d_i \iff s_i \ge 0$$</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         SECTION 2: STEP-BY-STEP IMPLEMENTATION WALKTHROUGH
+         =================================================================== -->
+    <section id="walkthrough" class="section-card">
+      <div class="section-header-split">
+        <div>
+          <span class="section-eyebrow">Technical Architecture</span>
+          <h2 class="section-heading">Step-by-Step Implementation Walkthrough</h2>
+          <p class="section-subtext">Click any step pill or use the navigation buttons below to inspect the concrete implementation of each pipeline component.</p>
+        </div>
+        <!-- Quick Step Selector Pills -->
+        <div class="step-selector-pills" id="step-pills">
+          <button class="step-pill active" data-step="1">1. Image Input</button>
+          <button class="step-pill" data-step="2">2. Request Creation</button>
+          <button class="step-pill" data-step="3">3. Admission Control</button>
+          <button class="step-pill" data-step="4">4. Scheduling Queue</button>
+          <button class="step-pill" data-step="5">5. Scheduler (FIFO/EDF)</button>
+          <button class="step-pill" data-step="6">6. Adaptive Controller</button>
+          <button class="step-pill" data-step="7">7. GPU Inference</button>
+          <button class="step-pill" data-step="8">8. Deadline Monitor</button>
+          <button class="step-pill" data-step="9">9. Final Outcome</button>
+          <button class="step-pill" data-step="10">10. Complete System</button>
+        </div>
+      </div>
+
+      <!-- CENTRAL ARCHITECTURE DIAGRAM -->
+      <div class="diagram-wrapper">
+        <div class="diagram-header-bar">
+          <span class="dh-title">System Architecture Flow Diagram</span>
+          <span class="dh-legend">
+            <span class="legend-dot dot-blue"></span> Request Processing
+            <span class="legend-dot dot-purple"></span> RTS Scheduling &amp; Control
+            <span class="legend-dot dot-teal"></span> Vision Inference
+            <span class="legend-dot dot-green"></span> Success Outcome
+            <span class="legend-dot dot-red"></span> Rejection / Miss
+          </span>
+        </div>
+
+        <div class="architecture-diagram" id="arch-diagram">
+          <!-- FLOW ROW 1: Inlet to Admission -->
+          <div class="diag-node-col">
+            <div class="diag-node node-blue" id="node-step-1" data-step="1">
+              <div class="node-badge">Step 1</div>
+              <div class="node-icon">📷</div>
+              <div class="node-title">Image Input</div>
+              <div class="node-sub">Raw Sensor Frame</div>
+            </div>
+          </div>
+
+          <div class="diag-connector">
+            <div class="arrow-line"></div>
+            <div class="arrow-head">&rarr;</div>
+          </div>
+
+          <div class="diag-node-col">
+            <div class="diag-node node-blue" id="node-step-2" data-step="2">
+              <div class="node-badge">Step 2</div>
+              <div class="node-icon">📋</div>
+              <div class="node-title">Request Creation</div>
+              <div class="node-sub">Attach $r_i, D_i \implies d_i$</div>
+            </div>
+          </div>
+
+          <div class="diag-connector">
+            <div class="arrow-line"></div>
+            <div class="arrow-head">&rarr;</div>
+          </div>
+
+          <div class="diag-node-col">
+            <!-- Decision Diamond: Admission Control -->
+            <div class="diag-decision-diamond" id="node-step-3" data-step="3">
+              <div class="diamond-badge">Step 3</div>
+              <div class="diamond-title">Admission Control</div>
+              <div class="diamond-question">Is $t_{\text{finish}} \le d_i$?</div>
+            </div>
+          </div>
+
+          <!-- Branch A: Accepted into Queue -->
+          <div class="diag-connector branch-yes">
+            <span class="branch-label text-success">Admitted &rarr;</span>
+            <div class="arrow-line"></div>
+            <div class="arrow-head">&rarr;</div>
+          </div>
+
+          <div class="diag-node-col">
+            <div class="diag-node node-purple" id="node-step-4" data-step="4">
+              <div class="node-badge">Step 4</div>
+              <div class="node-icon">📥</div>
+              <div class="node-title">Priority Queue</div>
+              <div class="node-sub">Buffer Waiting Requests</div>
+            </div>
+          </div>
+
+          <div class="diag-connector">
+            <div class="arrow-line"></div>
+            <div class="arrow-head">&rarr;</div>
+          </div>
+
+          <div class="diag-node-col">
+            <div class="diag-node node-purple" id="node-step-5" data-step="5">
+              <div class="node-badge">Step 5</div>
+              <div class="node-icon">⏱️</div>
+              <div class="node-title">Scheduler</div>
+              <div class="node-sub">FIFO / EDF Priority Pop</div>
+            </div>
+          </div>
+
+          <div class="diag-connector">
+            <div class="arrow-line"></div>
+            <div class="arrow-head">&rarr;</div>
+          </div>
+
+          <div class="diag-node-col">
+            <div class="diag-node node-purple" id="node-step-6" data-step="6">
+              <div class="node-badge">Step 6</div>
+              <div class="node-icon">⚡</div>
+              <div class="node-title">Adaptive Controller</div>
+              <div class="node-sub">Slack-Aware Token Pruning</div>
+            </div>
+          </div>
+
+          <div class="diag-connector">
+            <div class="arrow-line"></div>
+            <div class="arrow-head">&rarr;</div>
+          </div>
+
+          <div class="diag-node-col">
+            <div class="diag-node node-teal" id="node-step-7" data-step="7">
+              <div class="node-badge">Step 7</div>
+              <div class="node-icon">🖥️</div>
+              <div class="node-title">GPU Inference</div>
+              <div class="node-sub">RTX 4060 CUDA Graph</div>
+            </div>
+          </div>
+
+          <div class="diag-connector">
+            <div class="arrow-line"></div>
+            <div class="arrow-head">&rarr;</div>
+          </div>
+
+          <div class="diag-node-col">
+            <!-- Decision Diamond: Deadline Monitor -->
+            <div class="diag-decision-diamond" id="node-step-8" data-step="8">
+              <div class="diamond-badge">Step 8</div>
+              <div class="diamond-title">Deadline Monitor</div>
+              <div class="diamond-question">Is $C_i \le d_i$?</div>
+            </div>
+          </div>
+
+          <div class="diag-connector">
+            <div class="arrow-line"></div>
+            <div class="arrow-head">&rarr;</div>
+          </div>
+
+          <div class="diag-node-col">
+            <div class="diag-node node-outcome" id="node-step-9" data-step="9">
+              <div class="node-badge">Step 9</div>
+              <div class="node-icon">📊</div>
+              <div class="node-title">Request Outcome</div>
+              <div class="node-sub">Terminal RTS States</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Terminal Branch Cards (Explicit Branches) -->
+        <div class="branches-container">
+          <div class="branch-card bc-rej" id="branch-node-rej">
+            <span class="bc-tag">Branch: Rejection</span>
+            <strong>Admission Rejected</strong>
+            <p>Infeasible at arrival &rarr; Dropped immediately to protect backlog ($N_{\text{rej}}$)</p>
+          </div>
+          <div class="branch-card bc-ontime" id="branch-node-ontime">
+            <span class="bc-tag">Branch: Success</span>
+            <strong>Completed On-Time</strong>
+            <p>$C_i \le d_i$ &rarr; High-utility inference result ready ($N_{\text{ontime}}$)</p>
+          </div>
+          <div class="branch-card bc-late" id="branch-node-late">
+            <span class="bc-tag">Branch: Timing Miss</span>
+            <strong>Completed Late</strong>
+            <p>$C_i > d_i$ &rarr; Valid prediction delivered past deadline ($N_{\text{late}}$)</p>
+          </div>
+          <div class="branch-card bc-exp" id="branch-node-exp">
+            <span class="bc-tag">Branch: Eviction</span>
+            <strong>Expired in Queue</strong>
+            <p>$t_{\text{dispatch}} \ge d_i$ &rarr; Evicted before execution starts ($N_{\text{exp}}$)</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- EXPLANATION PANEL (UPDATED PER STEP) -->
+      <div class="explanation-container">
+        <!-- Controls Bar -->
+        <div class="panel-control-bar">
+          <div class="step-indicator">
+            <span class="si-badge" id="exp-step-num">Step 1 of 10</span>
+            <span class="si-title" id="exp-step-title">Image Input</span>
+          </div>
+          <div class="step-nav-buttons">
+            <button class="btn btn-secondary" id="btn-prev-step" disabled>&larr; Previous Step</button>
+            <button class="btn btn-secondary" id="btn-reset-walkthrough">&#8634; Reset</button>
+            <button class="btn btn-primary" id="btn-next-step">Next Step &rarr;</button>
+          </div>
+        </div>
+
+        <!-- Dynamic Content Body -->
+        <div class="panel-content-grid" id="explanation-body">
+          <!-- Populated dynamically by app.js -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         SECTION 3: RESULTS, EVIDENCE & SCIENTIFIC LIMITATIONS
+         =================================================================== -->
+    <section id="results-limitations" class="section-card">
+      <div class="section-header">
+        <span class="section-eyebrow">Empirical Verification</span>
+        <h2 class="section-heading">Experimental Results &amp; Provenance</h2>
+        <p class="section-subtext">All metrics below are canonical results audited from Phase 24B experimental records (<a href="file:///c:/Users/palak/Desktop/RTS_PROJECT/outputs/phase24b/corrected_results.csv" class="doc-link">outputs/phase24b/corrected_results.csv</a>).</p>
+      </div>
+
+      <!-- Primary High-Load Benchmark Table -->
+      <div class="results-table-box">
+        <div class="table-title">
+          <span>Table 1: Primary Overload Benchmark (<code>periodic_high_tight</code>, 100-request suite, Seed 44)</span>
+          <span class="table-badge">Canonical Audited Artifact</span>
+        </div>
+        <div class="table-responsive">
+          <table class="academic-table">
+            <thead>
+              <tr>
+                <th>Policy Configuration</th>
+                <th>Scheduling</th>
+                <th>Admission Control</th>
+                <th>Model Selection</th>
+                <th>Offered ($N_{\text{off}}$)</th>
+                <th>Admitted ($N_{\text{adm}}$)</th>
+                <th>Rejected ($N_{\text{rej}}$)</th>
+                <th>On-Time ($N_{\text{ontime}}$)</th>
+                <th>Late ($N_{\text{late}}$)</th>
+                <th>Expired ($N_{\text{exp}}$)</th>
+                <th>On-Time Ratio ($N_{\text{ontime}} / N_{\text{off}}$)</th>
+                <th>Expected Accuracy</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="row-baseline">
+                <td><strong>Baseline (Fixed DeiT)</strong></td>
+                <td>FIFO</td>
+                <td>Disabled</td>
+                <td>Fixed DeiT-Small (196 tok)</td>
+                <td>100</td>
+                <td>100</td>
+                <td>0</td>
+                <td>6</td>
+                <td>71</td>
+                <td>23</td>
+                <td><span class="val-miss">6.0%</span></td>
+                <td>92.67%</td>
+              </tr>
+              <tr>
+                <td><strong>EDF Alone (Fixed DeiT)</strong></td>
+                <td>EDF</td>
+                <td>Disabled</td>
+                <td>Fixed DeiT-Small (196 tok)</td>
+                <td>100</td>
+                <td>100</td>
+                <td>0</td>
+                <td>6</td>
+                <td>71</td>
+                <td>23</td>
+                <td><span class="val-miss">6.0%</span></td>
+                <td>92.67%</td>
+              </tr>
+              <tr>
+                <td><strong>Fixed EViT (Keep Rate 0.7)</strong></td>
+                <td>FIFO</td>
+                <td>Disabled</td>
+                <td>Fixed EViT-0.7 (98 tok)</td>
+                <td>100</td>
+                <td>100</td>
+                <td>0</td>
+                <td>10</td>
+                <td>79</td>
+                <td>11</td>
+                <td><span class="val-miss">10.0%</span></td>
+                <td>93.19%</td>
+              </tr>
+              <tr>
+                <td><strong>EDF + Admission Control</strong></td>
+                <td>EDF</td>
+                <td>Enabled</td>
+                <td>Fixed DeiT-Small (196 tok)</td>
+                <td>100</td>
+                <td>56</td>
+                <td>44</td>
+                <td>56</td>
+                <td>0</td>
+                <td>0</td>
+                <td><span class="val-mid">56.0%</span></td>
+                <td>92.67%</td>
+              </tr>
+              <tr>
+                <td><strong>EDF + Adaptive Controller</strong></td>
+                <td>EDF</td>
+                <td>Disabled</td>
+                <td>Adaptive EViT</td>
+                <td>100</td>
+                <td>100</td>
+                <td>0</td>
+                <td>76</td>
+                <td>0</td>
+                <td>24</td>
+                <td><span class="val-success">76.0%</span></td>
+                <td>92.48%</td>
+              </tr>
+              <tr class="row-proposed">
+                <td><strong>Proposed System (Full)</strong></td>
+                <td>EDF</td>
+                <td>Enabled</td>
+                <td>Adaptive EViT</td>
+                <td>100</td>
+                <td>76</td>
+                <td>24</td>
+                <td>76</td>
+                <td>0</td>
+                <td>0</td>
+                <td><span class="val-highlight">76.0%</span></td>
+                <td>92.48%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="table-footnote">
+          <em>Verification Note:</em> In <code>periodic_high_tight</code>, the proposed system delivers a <strong>+70.0 percentage point gain</strong> in on-time completion (from 6.0% to 76.0%). Conservation identity holds: $76 + 24 = 100$ offered; $76 + 0 = 76$ admitted; $76 + 0 = 76$ completed.
+        </div>
+      </div>
+
+      <!-- Verified Model Profile Specifications -->
+      <div class="models-spec-grid">
+        <div class="spec-card">
+          <div class="sc-header">
+            <strong>DeiT-Small Baseline</strong>
+            <span class="sc-badge badge-deit">Full Tokens</span>
+          </div>
+          <div class="sc-body">
+            <div><span>Tokens Retained:</span> <strong>196 / 196 (1.0)</strong></div>
+            <div><span>FLOPs (MACs):</span> <strong>4.60 G</strong></div>
+            <div><span>CUDA Graph p95:</span> <strong>3.779 ms</strong></div>
+            <div><span>Throughput:</span> <strong>432.6 fps</strong></div>
+            <div><span>BDD100K Test Acc:</span> <strong>92.67%</strong></div>
+          </div>
+        </div>
+
+        <div class="spec-card">
+          <div class="sc-header">
+            <strong>EViT-Small 0.9</strong>
+            <span class="sc-badge badge-k09">&rho; = 0.9</span>
+          </div>
+          <div class="sc-body">
+            <div><span>Tokens Retained:</span> <strong>147 / 196 (0.75)</strong></div>
+            <div><span>FLOPs (MACs):</span> <strong>4.03 G</strong></div>
+            <div><span>CUDA Graph p95:</span> <strong>3.512 ms</strong></div>
+            <div><span>Throughput:</span> <strong>469.5 fps</strong></div>
+            <div><span>BDD100K Test Acc:</span> <strong>92.75%</strong></div>
+          </div>
+        </div>
+
+        <div class="spec-card">
+          <div class="sc-header">
+            <strong>EViT-Small 0.7</strong>
+            <span class="sc-badge badge-k07">&rho; = 0.7</span>
+          </div>
+          <div class="sc-body">
+            <div><span>Tokens Retained:</span> <strong>98 / 196 (0.50)</strong></div>
+            <div><span>FLOPs (MACs):</span> <strong>3.03 G</strong></div>
+            <div><span>CUDA Graph p95:</span> <strong>3.250 ms</strong></div>
+            <div><span>Throughput:</span> <strong>622.2 fps</strong></div>
+            <div><span>BDD100K Test Acc:</span> <strong>93.19%</strong></div>
+          </div>
+        </div>
+
+        <div class="spec-card">
+          <div class="sc-header">
+            <strong>EViT-Small 0.5</strong>
+            <span class="sc-badge badge-k05">&rho; = 0.5</span>
+          </div>
+          <div class="sc-body">
+            <div><span>Tokens Retained:</span> <strong>49 / 196 (0.25)</strong></div>
+            <div><span>FLOPs (MACs):</span> <strong>2.31 G</strong></div>
+            <div><span>CUDA Graph p95:</span> <strong>2.710 ms</strong></div>
+            <div><span>Throughput:</span> <strong>788.8 fps</strong></div>
+            <div><span>BDD100K Test Acc:</span> <strong>91.44%</strong></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- WHAT THIS EXPERIMENT DOES NOT PROVE (LIMITATIONS) -->
+      <div class="limitations-box">
+        <div class="limitations-header">
+          <div class="lh-icon">⚠️</div>
+          <div>
+            <h3 class="lh-title">What This Experiment Does Not Prove (Scientific Limitations)</h3>
+            <p class="lh-sub">Rigorously documented in compliance with Phase 24B research audit standards.</p>
+          </div>
+        </div>
+
+        <div class="limitations-grid">
+          <div class="lim-card">
+            <strong>1. Soft Real-Time vs. Hard WCET Guarantees</strong>
+            <p>Our timing metrics rely on empirical $p95$ and median execution measurements. Due to OS thread scheduling, PCIe bus contention, and GPU driver overheads on Windows 11, these bounds do <em>not</em> constitute formal, provable Worst-Case Execution Time (WCET) guarantees required by safety-critical avionics or automotive systems.</p>
+          </div>
+
+          <div class="lim-card">
+            <strong>2. Hardware &amp; Batch Size Dependency</strong>
+            <p>Sub-4ms latencies require <strong>batch size = 1</strong> accelerated by <strong>CUDA Graphs</strong> on an NVIDIA GeForce RTX 4060 Laptop GPU. Under eager PyTorch execution without CUDA graphs, kernel launch overhead inflates execution to $13.4\text{–}15.7\text{ ms}$, exceeding typical tight deadlines ($5.0\text{ ms}$).</p>
+          </div>
+
+          <div class="lim-card">
+            <strong>3. Empirical Driving Scene Accuracy</strong>
+            <p>We evaluate empirical classification accuracy directly on held-out BDD100K driving scene test images ($C=6$), reporting 65.3%–71.1% top-1 accuracy under physical RTX 4060 GPU execution.</p>
+          </div>
+
+          <div class="lim-card">
+            <strong>4. Non-Preemptive GPU Queueing Dynamics</strong>
+            <p>Under non-preemptive GPU execution, EDF queue ordering alone provides <em>no advantage</em> over FIFO when deadlines are monotonic with arrival order (as seen in 8 out of 10 workloads). In unconstrained overload without admission control, EDF can even induce domino misses.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Formal RTS Accounting Conservation Identities -->
+      <div class="accounting-card">
+        <h4 class="ac-heading">Formal RTS Conservation Accounting Proofs</h4>
+        <div class="ac-identities">
+          <div class="ac-box">
+            <span class="ac-math">$$N_{\text{adm}} + N_{\text{rej}} = N_{\text{off}}$$</span>
+            <span class="ac-caption">Every offered request is either admitted into the system or rejected at the arrival inlet.</span>
+          </div>
+          <div class="ac-box">
+            <span class="ac-math">$$N_{\text{comp}} + N_{\text{exp}} = N_{\text{adm}}$$</span>
+            <span class="ac-caption">Every admitted request either completes execution on the GPU or expires while waiting in queue.</span>
+          </div>
+          <div class="ac-box">
+            <span class="ac-math">$$N_{\text{ontime}} + N_{\text{late}} = N_{\text{comp}}$$</span>
+            <span class="ac-caption">Every completed request is strictly partitioned into on-time or late completion.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- =====================================================================
+       FOOTER
+       ===================================================================== -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div>
+        <strong>RTS_PROJECT: Deadline-Aware Adaptive Vision Inference</strong><br>
+        <span>Department of Computer Science &middot; Real-Time Systems Research</span>
+      </div>
+      <div class="footer-meta">
+        <span>Hardware: NVIDIA RTX 4060 Laptop GPU &middot; PyTorch 2.5.1+cu121 &middot; Python 3.11</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

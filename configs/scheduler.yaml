@@ -1,0 +1,37 @@
+# Real-Time Scheduling Configuration
+requests_per_workload: 100
+quality_threshold: 45.0
+latency_metric: "p95"
+backend: "cuda_graph"
+firm_deadlines: true
+
+policies:
+  - "FIFO_fixed_DeiT"
+  - "EDF_fixed_DeiT"
+  - "FIFO_fixed_EViT"
+  - "EDF_fixed_EViT"
+  - "EDF_AC_fixed_DeiT"
+  - "EDF_Adaptive"
+  - "EDF_Adaptive_AC"
+
+candidate_models:
+  - model_id: "deit_small_baseline"
+    keep_rate: 1.0
+    p95_latency_ms: 3.683
+    test_top1_accuracy: 77.64
+    gmacs: 4.60
+  - model_id: "evit_small_k09_fuse"
+    keep_rate: 0.9
+    p95_latency_ms: 3.238
+    test_top1_accuracy: 77.40
+    gmacs: 4.03
+  - model_id: "evit_small_k07_fuse"
+    keep_rate: 0.7
+    p95_latency_ms: 2.766
+    test_top1_accuracy: 76.97
+    gmacs: 3.03
+  - model_id: "evit_small_k05_fuse"
+    keep_rate: 0.5
+    p95_latency_ms: 2.385
+    test_top1_accuracy: 76.84
+    gmacs: 2.31

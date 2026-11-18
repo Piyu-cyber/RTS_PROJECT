@@ -1,0 +1,54 @@
+dataset_name: "BDD100K"
+task: "driving_scene_category_classification"
+num_classes: 6
+classes:
+  - "city street"
+  - "highway"
+  - "residential"
+  - "parking lot"
+  - "gas stations"
+  - "tunnel"
+
+splits:
+  train:
+    expected_valid_samples: 69634
+    undefined_samples: 366
+    total_samples: 70000
+  val:
+    expected_valid_samples: 9947
+    undefined_samples: 53
+    total_samples: 10000
+  test:
+    expected_valid_samples: 19902
+    undefined_samples: 98
+    total_samples: 20000
+  total_valid: 99483
+
+train_class_counts:
+  "city street": 43581
+  "highway": 17414
+  "residential": 8105
+  "parking lot": 378
+  "gas stations": 27
+  "tunnel": 129
+
+class_weight_formula:
+  raw_formula: "(N / (C * n_c)) ** 0.25"
+  mean_normalization: true
+  expected_normalized_weights:
+    - 0.3393
+    - 0.4268
+    - 0.5167
+    - 1.1118
+    - 2.1507
+    - 1.4547
+
+paths:
+  annotations_dir: "../data/bdd100k/annotations"
+  images_dir: "../data/bdd100k/images"
+  manifest_train: "../data/bdd100k/annotations/train_full.json"
+  manifest_val: "../data/bdd100k/annotations/val_full.json"
+  manifest_test: "../data/bdd100k/annotations/test_full.json"
+  smoke_manifest_train: "../data/bdd100k/annotations/train.json"
+  smoke_manifest_val: "../data/bdd100k/annotations/val.json"
+  smoke_manifest_test: "../data/bdd100k/annotations/test.json"

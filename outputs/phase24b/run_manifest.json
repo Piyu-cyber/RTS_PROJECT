@@ -1,0 +1,64 @@
+{
+  "metadata": {
+    "phase": "Phase 24B",
+    "timestamp": "2026-10-15T16:12:09.060774",
+    "execution_duration_sec": 7.65,
+    "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "driver_version": "591.66",
+    "python_version": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
+    "pytorch_version": "2.5.1+cu121",
+    "cuda_version": "12.1"
+  },
+  "canonical_suite": {
+    "workload_count": 10,
+    "requests_per_workload": 100,
+    "seeds": [
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49,
+      50,
+      51
+    ],
+    "total_simulation_runs": 70,
+    "output_csv": "outputs/phase24b/corrected_results.csv"
+  },
+  "robustness_suite": {
+    "regimes_count": 6,
+    "seeds_per_regime": 5,
+    "seeds": [
+      101,
+      102,
+      103,
+      104,
+      105
+    ],
+    "total_workload_traces": 30,
+    "total_simulation_runs": 210,
+    "output_csv": "outputs/phase24b/per_trace_results.csv"
+  },
+  "hardware_replay": {
+    "workloads": [
+      "periodic_mod_mod",
+      "bursty_high_tight",
+      "overload_tight_deadline"
+    ],
+    "policies": [
+      "FIFO_fixed_DeiT",
+      "EDF_fixed_DeiT",
+      "EDF_Adaptive_AC"
+    ],
+    "total_replay_runs": 9,
+    "output_csv": "outputs/phase24b/simulation_hardware_comparison.csv"
+  },
+  "model_checkpoints": {
+    "deit_small_baseline": "outputs/phase23b/checkpoints/deit_small_baseline_pet37_best.pth",
+    "evit_small_k09_fuse": "outputs/phase23b/checkpoints/evit_small_k09_fuse_pet37_best.pth",
+    "evit_small_k07_fuse": "outputs/phase23b/checkpoints/evit_small_k07_fuse_pet37_best.pth",
+    "evit_small_k05_fuse": "outputs/phase23b/checkpoints/evit_small_k05_fuse_pet37_best.pth"
+  }
+}

@@ -1,0 +1,20 @@
+epochs: 3
+batch_size: 64
+optimizer: "AdamW"
+head_learning_rate: 3.0e-4
+backbone_learning_rate: 2.0e-5
+weight_decay: 1.0e-4
+betas: [0.9, 0.999]
+warmup_epochs: 0.5
+lr_schedule: "cosine"
+min_lr: 1.0e-6
+mixed_precision: true
+checkpoint_selection_metric: "val_macro_f1"
+optimization_steps_per_epoch: 1089
+total_optimization_steps: 3267
+seeds:
+  - 42
+  - 123
+  - 456
+num_workers: 4
+pin_memory: true

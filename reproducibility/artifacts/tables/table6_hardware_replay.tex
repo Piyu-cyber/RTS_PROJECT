@@ -1,0 +1,21 @@
+\begin{table}[t]
+\centering
+\caption{Discrete-Event Simulation vs Physical GPU Hardware Trace Replay Validation}
+\label{tab:hardware_replay}
+\small
+\begin{tabular}{llcccc}
+\hline
+\textbf{Workload} & \textbf{Policy} & \textbf{Sim On-Time} & \textbf{GPU Replay} & \textbf{Makespan $\Delta$} & \textbf{Empirical Acc} \\
+\hline
+periodic\_mod\_mod & FIFO\_fixed\_DeiT & 100.0\% & 100.0\% & -0.07\% & 77.0\% \\
+periodic\_mod\_mod & EDF\_fixed\_DeiT & 100.0\% & 100.0\% & -0.15\% & 77.0\% \\
+periodic\_mod\_mod & EDF\_Adaptive\_AC & 100.0\% & 100.0\% & -0.15\% & 77.0\% \\
+bursty\_high\_tight & FIFO\_fixed\_DeiT & 36.0\% & 63.0\% & -0.52\% & 76.3\% \\
+bursty\_high\_tight & EDF\_fixed\_DeiT & 36.0\% & 59.0\% & -0.34\% & 76.5\% \\
+bursty\_high\_tight & EDF\_Adaptive\_AC & 79.0\% & 84.0\% & -0.20\% & 76.2\% \\
+overload\_tight\_deadline & FIFO\_fixed\_DeiT & 1.0\% & 2.0\% & -0.57\% & 74.0\% \\
+overload\_tight\_deadline & EDF\_fixed\_DeiT & 1.0\% & 1.0\% & -0.09\% & 80.0\% \\
+overload\_tight\_deadline & EDF\_Adaptive\_AC & 45.0\% & 60.0\% & -0.37\% & 76.7\% \\
+\hline
+\end{tabular}
+\end{table}

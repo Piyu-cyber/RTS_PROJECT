@@ -1,0 +1,69 @@
+requests_per_workload: 100
+quality_threshold: 45.0
+latency_metric: "p95"
+backend: "cuda_graph"
+firm_deadlines: true
+
+policies:
+  - "FIFO_fixed_DeiT"
+  - "EDF_fixed_DeiT"
+  - "FIFO_fixed_EViT"
+  - "EDF_fixed_EViT"
+  - "EDF_AC_fixed_DeiT"
+  - "EDF_Adaptive"
+  - "EDF_Adaptive_AC"
+
+workload_scenarios:
+  - name: "periodic_low_loose"
+    intensity: 0.50
+    deadline_type: "loose"
+  - name: "periodic_mod_mod"
+    intensity: 0.85
+    deadline_type: "moderate"
+  - name: "periodic_high_tight"
+    intensity: 1.15
+    deadline_type: "tight"
+  - name: "periodic_low_tight"
+    intensity: 0.50
+    deadline_type: "tight"
+  - name: "jittered_mod_mod"
+    intensity: 0.85
+    deadline_type: "moderate"
+  - name: "jittered_high_tight"
+    intensity: 1.15
+    deadline_type: "tight"
+  - name: "bursty_mod_mod"
+    intensity: 0.85
+    deadline_type: "moderate"
+  - name: "bursty_high_tight"
+    intensity: 1.15
+    deadline_type: "tight"
+  - name: "overload_mod_deadline"
+    intensity: 1.50
+    deadline_type: "moderate"
+  - name: "overload_tight_deadline"
+    intensity: 1.50
+    deadline_type: "tight"
+
+candidate_models:
+  - model_id: "deit_small_baseline"
+    p95_latency_ms: 3.683
+    val_accuracy: 78.00
+  - model_id: "evit_small_k09_fuse"
+    p95_latency_ms: 3.543
+    val_accuracy: 77.61
+  - model_id: "evit_small_k07_fuse"
+    p95_latency_ms: 3.491
+    val_accuracy: 76.87
+  - model_id: "evit_small_k05_fuse"
+    p95_latency_ms: 2.806
+    val_accuracy: 77.46
+
+replay_configurations:
+  - workload: "periodic_mod_mod"
+    policies: ["FIFO_fixed_DeiT", "EDF_fixed_DeiT", "EDF_Adaptive_AC"]
+  - workload: "bursty_high_tight"
+    policies: ["FIFO_fixed_DeiT", "EDF_fixed_DeiT", "EDF_Adaptive_AC"]
+  - workload: "overload_tight_deadline"
+    policies: ["FIFO_fixed_DeiT", "EDF_fixed_DeiT", "EDF_Adaptive_AC"]
+  num_images: 100

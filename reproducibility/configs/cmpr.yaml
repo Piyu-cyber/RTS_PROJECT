@@ -1,0 +1,12 @@
+loss_name: "Class-Margin-Preserving Regularization (CMPR)"
+lambda_cmpr: 0.5
+gamma: 0.0
+teacher_gate: true
+epsilon: 1.0e-6
+huber_delta: 1.0
+teacher_architecture: "deit_small_baseline"
+teacher_checkpoint: "../outputs/cmpr_matched_training/checkpoints/M0_seed42_best.pth"
+teacher_eval_mode: true
+teacher_requires_grad: false
+log_teacher_correct_counts: true
+description: "Teacher-guided class margin preservation with correctness gating"

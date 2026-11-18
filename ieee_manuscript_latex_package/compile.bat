@@ -1,0 +1,7 @@
+@echo off
+pdflatex -interaction=nonstopmode revised_ieee_manuscript_refined.tex
+bibtex revised_ieee_manuscript_refined
+pdflatex -interaction=nonstopmode revised_ieee_manuscript_refined.tex
+pdflatex -interaction=nonstopmode revised_ieee_manuscript_refined.tex
+del /q revised_ieee_manuscript_refined.aux revised_ieee_manuscript_refined.bbl revised_ieee_manuscript_refined.blg revised_ieee_manuscript_refined.log 2>nul
+echo Compilation complete: revised_ieee_manuscript_refined.pdf

@@ -1,0 +1,28 @@
+hardware_platform:
+  gpu_target: "NVIDIA GeForce RTX 4060 Laptop GPU"
+  expected_vram_gb: 8.0
+  precision: "fp32"
+  device: "cuda:0"
+
+warmup_iterations: 50
+measured_iterations: 200
+
+benchmarks:
+  eager_bs1:
+    batch_size: 1
+    backend: "eager"
+    metrics: ["mean_ms", "median_ms", "p95_ms", "p99_ms"]
+  cuda_graph_bs1:
+    batch_size: 1
+    backend: "cuda_graph"
+    metrics: ["mean_ms", "median_ms", "p95_ms", "p99_ms"]
+  throughput_bs64:
+    batch_size: 64
+    backend: "eager"
+    metrics: ["batch_latency_ms", "throughput_fps", "peak_vram_mb"]
+
+models:
+  - "deit_small_baseline"
+  - "evit_small_k09_fuse"
+  - "evit_small_k07_fuse"
+  - "evit_small_k05_fuse"

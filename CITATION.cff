@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+message: "If you use this research or software, please cite it as below."
+title: "Deadline-Aware Adaptive Inference for Real-Time Vision Systems"
+authors:
+  - family-names: "Prashant"
+    given-names: "Piyush"
+  - family-names: "Mittal"
+    given-names: "Priyanshu"
+  - family-names: "Gowda U M"
+    given-names: "Thejas"
+  - family-names: "Sahoo"
+    given-names: "Shriyansh S"
+version: 1.0.0
+date-released: 2026-11-19
+url: "https://github.com/Piyu-cyber/RTS_PROJECT"
+repository-code: "https://github.com/Piyu-cyber/RTS_PROJECT"
+keywords:
+  - real-time systems
+  - vision transformers
+  - token pruning
+  - earliest deadline first
+  - admission control
+  - adaptive inference

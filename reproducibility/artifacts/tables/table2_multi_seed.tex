@@ -1,0 +1,23 @@
+\begin{table}[t]
+\centering
+\caption{Multi-Seed Validation and Statistical Reliability ($k=0.7$)}
+\label{tab:multi_seed}
+\small
+\begin{tabular}{lcccc}
+\hline
+\textbf{Metric} & \textbf{Seed 42} & \textbf{Seed 123} & \textbf{Seed 456} & \textbf{Mean $\pm$ Std} \\
+\hline
+\multicolumn{5}{l}{\textit{K07-CB Baseline:}} \\
+Top-1 Acc (\%) & 77.01 & 76.11 & 76.43 & 76.52% ± 0.46% \\
+Macro-F1 (\%) & 62.15 & 64.84 & 57.41 & 61.47% ± 3.76% \\
+Weighted-F1 (\%) & 77.1 & 76.38 & 76.59 & 76.69% ± 0.37% \\
+\hline
+\multicolumn{5}{l}{\textit{K07-CB-CMPR (Proposed):}} \\
+Top-1 Acc (\%) & 78.06 & 77.81 & 77.78 & 77.88% ± 0.15% \\
+Macro-F1 (\%) & 62.42 & 61.39 & 54.42 & 59.41% ± 4.35% \\
+Weighted-F1 (\%) & 77.73 & 77.51 & 77.47 & 77.57% ± 0.14% \\
+\hline
+\textbf{Paired Delta $\Delta$} & +1.05 & +1.70 & +1.35 & \textbf{+1.37% ± 0.33%} \\
+\hline
+\end{tabular}
+\end{table}

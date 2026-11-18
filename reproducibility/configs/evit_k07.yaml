@@ -1,0 +1,26 @@
+model_id: "evit_small_k07_fuse"
+architecture: "deit_small_patch16_shrink_base"
+embed_dim: 384
+depth: 12
+num_heads: 6
+mlp_ratio: 4.0
+patch_size: 16
+img_size: 224
+num_classes: 6
+keep_rate: 0.70
+fuse_token: true
+drop_loc: [3, 6, 9]
+original_visual_tokens: 196
+cls_token: 1
+sequence_lengths_after_drops:
+  block_3: 140
+  block_6: 100
+  block_9: 72
+final_sequence_length: 72
+gmacs: 3.03
+params_m: 21.67
+pretrained_weights: "../reference/evit_weights/evit_small_patch16_0.7_fuse.pth"
+published_top1_in1k: 79.5
+published_top5_in1k: 94.8
+published_throughput_in1k: 4385.0
+description: "EViT DeiT-Small with 0.7 token retention and inattentive token fusion"
