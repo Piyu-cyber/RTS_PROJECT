@@ -4,10 +4,11 @@
 
 In soft real-time vision inference, processing an image correctly but delivering the result past its deadline renders the prediction degraded or useless. Conventional inference engines run a fixed neural network model (e.g., full DeiT-Small) in first-come, first-served order. When incoming request arrival rates exceed the GPU processing capacity, requests accumulate in the software queue. Under high queueing delay, subsequent requests miss their deadlines even if the GPU execution itself takes only a few milliseconds.
 
-This system addresses queue-induced deadline collapse through a three-stage real-time architecture:
+This system addresses queue-induced deadline collapse through a unified real-time architecture:
 1. **Queue-Aware Feasibility Gating (Admission Control)**: Drops infeasible requests upon arrival to prevent useless work from saturating GPU pipelines.
 2. **Dynamic Priority Queueing (Earliest Deadline First)**: Dispatches requests in order of absolute deadline urgency rather than arrival time.
-3. **Slack-Guided Model Adaptation (Adaptive EViT Selection)**: Evaluates remaining deadline slack at the moment of GPU dispatch and dynamically selects the highest-accuracy Vision Transformer variant that can complete before the deadline.
+3. **Regularized Pruned Perception (CB-CMPR)**: Class-Balanced Cross-Entropy with Correctness-Gated Margin-Preserving Regularization, enabling pruned models—most notably EViT $k=0.7$—to retain high discriminative accuracy ($77.88\%$ Top-1) while reducing compute by $34.1\%$.
+4. **Slack-Guided Model Adaptation (Adaptive EViT Selection)**: Evaluates remaining deadline slack at the moment of GPU dispatch and dynamically selects the highest-accuracy Vision Transformer variant that can complete before the deadline.
 
 ---
 
@@ -63,7 +64,7 @@ flowchart TD
     DispCheck -- "Yes" --> AdaptCtrl["Adaptive Controller\nCalculates Slack: D_i - (t_now + Latency)"]
     
     AdaptCtrl --> ModelSel{"Candidate Feasibility\n(Validation Quality Gated)"}
-    ModelSel -- "Feasible candidates exist" --> PickMax["Select Highest Quality\nFeasible Candidate\n(DeiT, k=0.9, 0.7, 0.5)"]
+    ModelSel -- "Feasible candidates exist" --> PickMax["Select Highest Quality\nFeasible Candidate\n(DeiT, k=0.9, k=0.7 CB-CMPR, k=0.5)"]
     ModelSel -- "No candidate feasible & Firm" --> ExpOut
     ModelSel -- "No candidate feasible & Soft" --> PickFast["Fallback to Fastest (k=0.5)"]
     
@@ -89,3 +90,31 @@ To eliminate host launch jitter, the system encapsulates each Vision Transformer
 - **Replay Execution**: At runtime, image data is copied into the pre-allocated static buffer and `graph.replay()` is triggered.
 
 This reduces median inference latency on the NVIDIA RTX 4060 GPU from ~13.1 ms (eager) to **3.15 ms** (CUDA Graph) for DeiT-Small, and down to **2.38 ms** for EViT $k=0.5$, providing predictable execution profiles required for real-time scheduling.
+
+---
+
+## 5. Regularized Perception Architecture: CB-CMPR
+
+To overcome class imbalance and logit-margin compression caused by token pruning, the training pipeline couples Smooth Class-Balanced Cross-Entropy with Correctness-Gated Margin-Preserving Regularization:
+
+```mermaid
+flowchart LR
+    Img["Input Image (x)"] --> Teacher["Teacher ViT\n(DeiT-Small Baseline\n4.60 GMACs, Fixed)"]
+    Img --> Student["Student EViT\n(Token Pruned k=0.7\n3.03 GMACs)"]
+    
+    Teacher --> LogitsT["Teacher Logits (z_T)"]
+    Student --> LogitsS["Student Logits (z_S)"]
+    
+    LogitsT --> MarginT["Teacher Logit Margin\nm_T = z_y - max(z_j)"]
+    LogitsS --> MarginS["Student Logit Margin\nm_S = z_y - max(z_j)"]
+    
+    LogitsT --> Gate{"Teacher Correct?\nargmax(z_T) == y"}
+    
+    MarginT & MarginS & Gate --> CMPRLoss["Correctness-Gated CMPR Loss\nL_CMPR = gate * max(0, m_T - m_S)^2"]
+    LogitsS & ClassWeights["Class Weights w_norm"] --> CB_CELoss["Class-Balanced CE Loss\nL_CB-CE"]
+    
+    CB_CELoss & CMPRLoss --> TotalLoss["Total Loss\nL_total = L_CB-CE + alpha * L_CMPR"]
+    TotalLoss --> Backprop["Backprop to Student Only"]
+```
+
+This ensures that the pruned student ($k=0.7$) retains the discriminative decision boundaries of the unpruned teacher, yielding $77.88\%$ Top-1 accuracy while operating in just $2.77\text{ ms}$ on the GPU.

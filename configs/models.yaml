@@ -30,8 +30,26 @@ models:
     eager_p95_ms: 12.890
     throughput_fps: 469.0
 
+  evit_small_k07_cb_cmpr:
+    display_name: "EViT-Small (Keep Rate 0.7 + CB-CMPR Regularization) [PROPOSED WORKHORSE]"
+    architecture: "evit_small_patch16_224"
+    parameters_m: 21.67
+    macs_g: 3.03
+    keep_rate: 0.7
+    fuse_token: true
+    token_sequence: [196, 196, 196, 140, 140, 140, 100, 100, 100, 72, 72, 72]
+    bdd100k_val_top1: 78.35
+    bdd100k_test_top1: 77.88
+    bdd100k_test_weighted_f1: 77.57
+    bdd100k_test_macro_f1: 53.53
+    cuda_graph_p95_ms: 2.766
+    eager_p95_ms: 10.450
+    throughput_fps: 557.3
+    loss: "CB-CE + Margin-Preserving Regularization (CMPR)"
+    class_weights: [0.3393, 0.4268, 0.5167, 1.1118, 2.1507, 1.4547]
+
   evit_small_k07_fuse:
-    display_name: "EViT-Small (Keep Rate 0.7 + Fusion)"
+    display_name: "EViT-Small (Keep Rate 0.7 + Standard CE)"
     architecture: "evit_small_patch16_224"
     parameters_m: 21.67
     macs_g: 3.03

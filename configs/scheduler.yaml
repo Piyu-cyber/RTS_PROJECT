@@ -25,6 +25,13 @@ candidate_models:
     p95_latency_ms: 3.238
     test_top1_accuracy: 77.40
     gmacs: 4.03
+  - model_id: "evit_small_k07_cb_cmpr"
+    keep_rate: 0.7
+    p95_latency_ms: 2.766
+    test_top1_accuracy: 77.88
+    test_weighted_f1: 77.57
+    gmacs: 3.03
+    description: "Proposed CB-CMPR regularized model, outperforming DeiT baseline with 34.1% compute savings"
   - model_id: "evit_small_k07_fuse"
     keep_rate: 0.7
     p95_latency_ms: 2.766

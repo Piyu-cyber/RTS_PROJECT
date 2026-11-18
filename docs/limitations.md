@@ -27,13 +27,13 @@ Commercial NVIDIA GPUs and the PyTorch execution stack do not support fine-grain
 While Earliest Deadline First (EDF) is optimal for underloaded uniprocessor systems with independent preemption, **non-preemptive EDF degrades severely under sustained overload if admission control is omitted**:
 - When $\sum e_i > \Delta t$, EDF repeatedly dispatches the most urgent request that is already on the verge of missing its deadline.
 - By the time that request finishes, subsequent requests have also passed their deadlines, creating cascading "domino" deadline misses.
-- **Ablation Finding**: In Phase 24B experiments, unconstrained `EDF_fixed_DeiT` completed only $1.0\%$ of requests on-time under severe overload (`overload_tight`), whereas enabling admission control (`EDF_AC_fixed_DeiT`) restored on-time completion to $37.0\%$, and adaptive pruning (`EDF_Adaptive_AC`) reached $46.0\%$.
+- **Ablation Finding**: In benchmark experiments, unconstrained `EDF_fixed_DeiT` completed only $1.0\%$ of requests on-time under severe overload (`overload_tight`), whereas enabling admission control (`EDF_AC_fixed_DeiT`) restored on-time completion to $37.0\%$, and adaptive pruning (`EDF_Adaptive_AC`) reached $46.0\%$.
 
 ---
 
 ## 4. Sensitivity of Simulation to Tail Latency Modeling
 
-As documented in the Phase 24B audit:
+As documented in our empirical timing audit:
 - When the discrete-event simulator is parameterized with conservative $p95$ latency ($3.78\text{ ms}$ for DeiT-Small), it assumes every single task experiences tail latency. Under bursty traffic (`bursty_high_tight`), this caused the simulator to predict $27.0\%$ on-time completion.
 - In reality, physical GPU runs execute most requests near median latency ($3.15\text{ ms}$), achieving $60.0\%$ on-time completion on physical hardware.
 - When parameterized with median latency, the simulator predicted $67.0\%$, closely matching physical measurements.

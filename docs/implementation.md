@@ -89,9 +89,9 @@ Selects the model configuration at dispatch time by evaluating dynamic remaining
 Loads validated timing and accuracy distributions measured empirically on target hardware (NVIDIA RTX 4060).
 
 ### Profile Schema
-- `config_id`: e.g., `deit_small_baseline`, `evit_small_k09_fuse`, `evit_small_k07_fuse`, `evit_small_k05_fuse`.
+- `config_id`: e.g., `deit_small_baseline`, `evit_small_k09_fuse`, `evit_small_k07_cb_cmpr`, `evit_small_k05_fuse`.
 - `keep_rate`: Token retention ratio (1.0, 0.9, 0.7, 0.5).
-- `parameters_m`: Parameter count (21.67M for 6-class BDD100K head; 22.05M for 37-class Pet head).
+- `parameters_m`: Parameter count (21.67M for 6-class BDD100K head).
 - `macs_g`: Computational complexity in GMACs (4.60, 4.03, 3.03, 2.31).
 - `cuda_graph_latency_ms`: Dictionary containing `mean`, `median`, `p95`, `p99`, `min`, `max`, `std`.
 - `eager_latency_ms`: Unaccelerated eager execution latency distribution.
@@ -122,3 +122,26 @@ Replays request traces on physical NVIDIA RTX 4060 hardware using real images fr
 - Measures actual execution time via `torch.cuda.Event(enable_timing=True)`.
 - Synchronizes streams via `torch.cuda.synchronize()`.
 - Records empirical top-1 prediction accuracy and confusion matrices alongside physical millisecond timestamps.
+
+---
+
+## 8. Loss Formulations & Training Modules (CB-CE and Correctness-Gated CMPR)
+
+Located in `reproducibility/src/losses/` and `scripts/run_cmpr_matched_experiments.py`:
+
+### 8.1 Class-Balanced Cross-Entropy (`reproducibility/src/losses/class_balanced_ce.py`)
+Applies smoothed effective-number weighting to counteract extreme class imbalance (209:1 ratio in BDD100K):
+$$\mathbf{w}_{\text{norm}} = [0.3393, 0.4268, 0.5167, 1.1118, 2.1507, 1.4547]$$
+$$\mathcal{L}_{\text{CB-CE}}(z_S, y) = -\sum_{c=1}^C w_c \cdot y_c \log \sigma(z_S)_c$$
+
+### 8.2 Correctness-Gated Margin Preservation Regularization (`reproducibility/src/losses/cmpr.py`)
+Computes logit margin $m = z_y - \max_{j \neq y} z_j$ for student ($m_S$) and teacher ($m_T$):
+$$\Delta m = m_T - m_S - \gamma$$
+$$\text{hinge} = \max(0, \Delta m)^2$$
+Enforces correctness gating where only samples correctly classified by the teacher contribute:
+$$g = \mathbb{I}(\arg\max z_T = y)$$
+$$\mathcal{L}_{\text{CMPR}} = \frac{\sum_i g_i \cdot \max(0, m_{T,i} - m_{S,i} - \gamma)^2}{\sum_i g_i + \epsilon}$$
+
+Combined objective:
+$$\mathcal{L}_{\text{total}} = \mathcal{L}_{\text{CB-CE}} + \alpha \cdot \mathcal{L}_{\text{CMPR}} + \beta \cdot \mathcal{L}_{\text{KD}}$$
+where $\alpha=1.0$, $\beta=0.5$, $\gamma=0.0$.
