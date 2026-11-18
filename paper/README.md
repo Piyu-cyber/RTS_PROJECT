@@ -1,35 +1,19 @@
-# Research Paper Artifacts: IEEE Manuscript Package
+# Research Paper
 
-This directory contains the IEEE research manuscript and publication-readiness artifacts for the project:
+## Title: Deadline-Aware Adaptive Vision Transformer Inference for Soft Real-Time Edge Workloads
 
-**Deadline-Aware Adaptive Inference with Drop-in Depthwise Convolution: A Runtime Evaluation on an RTX 4060**
-
----
-
-## 1. Directory Structure
-
-- `main.tex`: Full IEEE-style research manuscript written in standard IEEEtran LaTeX.
-- `references.bib`: BibTeX bibliography file with authentic, verifiable citations.
-- `audit_notes.md`: Detailed evidence audit notes mapping every empirical claim and table value to its underlying JSON/CSV source.
-- `figures/`: Diagnostic figures copied from verified Phase 9.1 and Phase 9.2 analyses:
-  - `fair_e2e_hit_rate_p95.png`: End-to-end deadline hit rate comparison under p95.
-  - `fair_model_hit_rate_p95.png`: Model-only deadline hit rate comparison under p95.
-  - `gpu_steady_state_latency.png`: 100-iteration steady-state forward pass latencies.
-  - `paired_hit_rate_delta.png`: Paired McNemar hit rate deltas across all three metrics.
-- `tables/`: Structured data sources used in the paper.
+**Authors:**
+- **Piyush Prashant** (Dept. of Data Science and AI, IIIT Dharwad)
+- **Priyanshu Mittal** (Dept. of Data Science and AI, IIIT Dharwad)
+- **Thejas Gowda U M** (Dept. of Computer Science, IIIT Dharwad)
+- **Shriyansh S Sahoo** (Dept. of Computer Science, IIIT Dharwad)
+- **Swagatika Sahoo** (Dept. of Computer Science, IIIT Dharwad)
 
 ---
 
-## 2. Compilation Instructions
+### PDF Document
+The complete research manuscript is available at:
+- [**`Deadline-Aware_Adaptive_ViT_Inference.pdf`**](Deadline-Aware_Adaptive_ViT_Inference.pdf)
 
-The manuscript `main.tex` is configured for compilation with `pdflatex` or `xelatex`:
-
-```bash
-cd paper
-pdflatex main.tex
-bibtex main
-pdflatex main.tex
-pdflatex main.tex
-```
-
-*Note on Local Environment:* The local host Windows environment currently lacks a pre-installed TeX distribution (`pdflatex` / `xelatex`). The LaTeX source `main.tex` and BibTeX file `references.bib` are completely self-contained and ready for compilation on Overleaf, arXiv, or any standard TeX Live / MiKTeX environment.
+### Abstract Summary
+Vision Transformers (ViTs) offer strong perception accuracy, but their quadratic attention cost and execution jitter make them hard to deploy in latency-critical edge systems, and class imbalance in driving data degrades pruned models further. This paper combines Efficient Vision Transformer (EViT) token pruning, class-balanced cross-entropy with teacher-guided margin-preserving regularization (CB-CMPR), and a deadline-aware scheduler with admission control (DA-ASAC). On the six-class BDD100K scene dataset, EViT with keep rate 0.7 reaches 77.88 ± 0.15% Top-1 accuracy over three seeds, reduces computation by 34.1%, and sustains 629.0 FPS on an NVIDIA RTX 4060 GPU. Across 70 simulated workload-policy configurations, the scheduler raises on-time completion by up to 73 percentage points under saturation, and GPU trace replay matches simulated makespan within 0.57%.

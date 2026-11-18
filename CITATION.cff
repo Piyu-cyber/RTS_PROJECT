@@ -1,15 +1,22 @@
 cff-version: 1.2.0
 message: "If you use this research or software, please cite it as below."
-title: "Deadline-Aware Adaptive Inference for Real-Time Vision Systems"
+title: "Deadline-Aware Adaptive Vision Transformer Inference for Soft Real-Time Edge Workloads"
 authors:
   - family-names: "Prashant"
     given-names: "Piyush"
+    affiliation: "IIIT Dharwad"
   - family-names: "Mittal"
     given-names: "Priyanshu"
+    affiliation: "IIIT Dharwad"
   - family-names: "Gowda U M"
     given-names: "Thejas"
+    affiliation: "IIIT Dharwad"
   - family-names: "Sahoo"
     given-names: "Shriyansh S"
+    affiliation: "IIIT Dharwad"
+  - family-names: "Sahoo"
+    given-names: "Swagatika"
+    affiliation: "IIIT Dharwad"
 version: 1.0.0
 date-released: 2026-11-19
 url: "https://github.com/Piyu-cyber/RTS_PROJECT"
@@ -21,3 +28,6 @@ keywords:
   - earliest deadline first
   - admission control
   - adaptive inference
+  - margin regularization
+  - BDD100K
+  - CUDA graphs
